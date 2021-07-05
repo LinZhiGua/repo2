@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 注：这里只扫描是业务层，不要出现重复扫描要情况 -->
+    <context:component-scan base-package="com.itheima.service"/>
+
+    <!--1. 加载jdbc.properties的配置-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!--2. 数据库连接池的配置-->
+    <bean class="com.alibaba.druid.pool.DruidDataSource" id="dataSource">
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+    </bean>
+
+<!--    1.spring 整合mybatis:配置mybatis会话工厂类-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+
+<!--   必须注入数据源     -->
+        <property name="dataSource" ref="dataSource"/>
+<!--        给实体类定义别名-->
+        <property name="typeAliasesPackage" value="com.itheima.domain"/>
+    </bean>
+<!--    2.spring整合mybatis:生成DAO接口的代理对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+
+<!--        指定dao接口所在的包-->
+        <property name="basePackage" value="com.itheima.dao"/>
+    </bean>
+
+
+
+</beans>
